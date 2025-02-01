@@ -19,42 +19,45 @@ function addTask() {
   const taskValue = task.value.trim();
 
   if (taskValue !== '') {
-    list.push(taskValue);
+    list.push({text: taskValue, checked: false});
     task.value = '';
-  }
-
-  renderList();
+    renderList();
     saveData();
+  }
 }
 
 function renderList() {
     listDisplay.innerHTML = '';
-    list.forEach((item, value) => {
+
+    list.forEach((item, index) => {
         const taskItem = document.createElement('div');
-        taskItem.className = 'task-item unchecked';
-    
+        taskItem.className = `task-item ${item.checked ? 'checked' : 'unchecked'}`;
+
         const taskText = document.createElement('span');
         taskText.className = 'task-text';
-        taskText.textContent = item;
+        taskText.textContent = item.text;
+
         const deleteBtn = document.createElement('span');
         deleteBtn.className = 'delete-btn';
         deleteBtn.innerHTML = '\u00D7';
-        deleteBtn.onclick = () => { deleteTask(value); };
+        deleteBtn.onclick = () => { deleteTask(index); };
 
         taskItem.appendChild(taskText);
         taskItem.appendChild(deleteBtn);
 
         taskItem.onclick = () => {
+          item.checked = !item.checked;
             taskItem.classList.toggle('checked');
             taskItem.classList.toggle('unchecked');
+            saveData();
         };
 
         listDisplay.appendChild(taskItem);
 });
 }
 
-function deleteTask(value) {
-    list.splice(value, 1);
+function deleteTask(index) {
+    list.splice(index, 1);
     saveData();
     renderList();
 }
@@ -69,5 +72,3 @@ task.addEventListener('keydown', (e) => {
 
 
 window.addEventListener('load', loadData);
-
-// Add Delete Button
